@@ -99,3 +99,18 @@ button:hover {
 .toggle-btn:hover {
   background-color: #3b8e3b;
 }
+
+.remove-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+  padding: 2px 5px;
+  font-size: 0.8rem;
+}
+
+.remove-btn:hover {
+  background-color: #c0392b;
+}
