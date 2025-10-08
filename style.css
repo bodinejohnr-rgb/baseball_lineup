@@ -7,14 +7,15 @@
   --muted:#444;
 }
 
-*{box-sizing:border-box;}
-body{
+* { box-sizing: border-box; }
+
+body {
   font-family: Arial, sans-serif;
-  background: var(--bg);
+  background: #f5f2e7; /* light beige */
   color: var(--text);
-  margin:0;
-  padding:16px;
-  text-align:center;
+  margin: 0;
+  padding: 16px;
+  text-align: center;
 }
 
 h1{ margin: 6px 0 16px; }
@@ -90,14 +91,15 @@ h2{ margin: 0 0 10px; }
   transform:translateY(-50%);
   font-weight:700;
 }
-.lineup-position{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  font-size:13px;
-  color:#333;
-  opacity:.85;
+.lineup-position {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;       /* bigger */
+  font-weight: 700;      /* bold */
+  color: #222;           /* darker gray */
+  opacity: 0.9;
 }
 
 /* tiny black close button, outside the card */
