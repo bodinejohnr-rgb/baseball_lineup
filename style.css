@@ -2,9 +2,12 @@ body {
   font-family: Arial, sans-serif;
   text-align: center;
   background-color: #e6f3e6;
+  margin: 0;
+  padding: 0;
 }
 
 h1 {
+  margin-top: 10px;
   margin-bottom: 1rem;
 }
 
@@ -12,33 +15,35 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  gap: 1rem;
   align-items: flex-start;
+  gap: 1rem;
+  padding: 10px;
 }
 
 .field-container {
   position: relative;
-  width: 450px;
+  width: 700px; /* bigger field */
 }
 
 .field {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 2px solid #4caf50;
 }
 
 .dropzone {
   position: absolute;
-  width: 60px;
-  height: 25px;
+  width: 80px;
+  height: 30px;
   background: white;
   border: 2px dashed #bbb;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  text-align: center;
 }
 
 .input-section textarea {
@@ -54,13 +59,13 @@ ul {
 li {
   background: white;
   border: 1px solid #ccc;
-  padding: 5px;
+  padding: 6px;
   margin-bottom: 5px;
   cursor: grab;
   text-align: left;
 }
 
-/* Two lists side by side */
+/* Lists container */
 .lists {
   display: flex;
   flex-direction: column;
