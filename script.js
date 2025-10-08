@@ -1,190 +1,218 @@
-let tenPlayerMode = false;
+// ===============================
+// Baseball Lineup Creator Script
+// ===============================
 
-// Coordinates for 9-player and 10-player fields
+let playerCount = 0;
+let isTenPlayerField = false;
+let fieldZones = [];
+let playersOnField = {};
+
+// ⚾ Coordinates for 9- and 10-player fields
 const nineFieldZones = [
-  { x: 340, y: 480 }, // C
-  { x: 340, y: 400 }, // P
-  { x: 500, y: 350 }, // 1B
-  { x: 400, y: 280 }, // 2B
-  { x: 250, y: 280 }, // SS
-  { x: 150, y: 350 }, // 3B
-  { x: 100, y: 170 }, // LF
-  { x: 340, y: 110 }, // CF
-  { x: 550, y: 170 }  // RF
+  { label: "C", x: 340, y: 480 },
+  { label: "P", x: 340, y: 420 },
+  { label: "1B", x: 550, y: 355 },
+  { label: "2B", x: 415, y: 280 },
+  { label: "SS", x: 245, y: 280 },
+  { label: "3B", x: 130, y: 345 },
+  { label: "LF", x: 80, y: 190 },
+  { label: "CF", x: 340, y: 100 },
+  { label: "RF", x: 580, y: 190 }
 ];
 
 const tenFieldZones = [
-  { x: 340, y: 480 }, // C
-  { x: 340, y: 400 }, // P
-  { x: 500, y: 350 }, // 1B
-  { x: 400, y: 280 }, // 2B
-  { x: 250, y: 280 }, // SS
-  { x: 150, y: 350 }, // 3B
-  { x: 80,  y: 170 }, // LF
-  { x: 230, y: 140 }, // LCF (extra)
-  { x: 400, y: 110 }, // CF
-  { x: 570, y: 170 }  // RF
+  { label: "C", x: 340, y: 480 },
+  { label: "P", x: 340, y: 420 },
+  { label: "1B", x: 550, y: 355 },
+  { label: "2B", x: 415, y: 280 },
+  { label: "SS", x: 245, y: 280 },
+  { label: "3B", x: 130, y: 345 },
+  { label: "LF", x: 60, y: 190 },
+  { label: "LCF", x: 230, y: 140 },
+  { label: "CF", x: 410, y: 100 },
+  { label: "RF", x: 590, y: 190 }
 ];
 
-const battingOrder = document.getElementById("battingOrder");
-const playerList = document.getElementById("playerList");
-const positionsDiv = document.getElementById("positions");
-const addPlayerBtn = document.getElementById("addPlayerBtn");
-const toggleFieldBtn = document.getElementById("toggleFieldBtn");
+// Initial setup
+document.addEventListener("DOMContentLoaded", () => {
+  fieldZones = [...nineFieldZones];
+  createField();
+  setupAddPlayerButton();
+  setupSwitchButton();
+});
 
-let dragged = null;
+// Create draggable player divs
+function createDraggablePlayer(name) {
+  const playerDiv = document.createElement("div");
+  playerDiv.classList.add("player");
+  playerDiv.textContent = name;
+  playerDiv.draggable = true;
+  playerDiv.dataset.name = name;
 
-// 🟢 Build the field layout
-function buildField() {
-  positionsDiv.innerHTML = "";
+  playerDiv.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", name);
+  });
 
-  const zones = tenPlayerMode ? tenFieldZones : nineFieldZones;
+  return playerDiv;
+}
 
-  zones.forEach((pos, i) => {
+// Create field positions
+function createField() {
+  const fieldContainer = document.querySelector(".field-container");
+  fieldContainer.innerHTML = "";
+
+  const fieldImage = document.createElement("img");
+  fieldImage.src = "Baseball Field.jpg";
+  fieldImage.classList.add("field");
+  fieldContainer.appendChild(fieldImage);
+
+  fieldZones.forEach((pos, index) => {
     const zone = document.createElement("div");
-    zone.className = "dropzone";
-    zone.draggable = true;
+    zone.classList.add("drop-zone");
+    zone.dataset.position = pos.label;
     zone.style.left = `${pos.x}px`;
     zone.style.top = `${pos.y}px`;
-    zone.dataset.zone = i;
-    zone.addEventListener("dragstart", handleDragStart);
-    positionsDiv.appendChild(zone);
-  });
 
-  setupDragDrop();
-}
-
-// 🟢 Enable drag/drop logic
-function setupDragDrop() {
-  // Field zones
-  document.querySelectorAll(".dropzone").forEach(zone => {
-    zone.addEventListener("dragover", e => e.preventDefault());
+    zone.addEventListener("dragover", (e) => e.preventDefault());
     zone.addEventListener("drop", handleDrop);
+
+    fieldContainer.appendChild(zone);
   });
-
-  // Position player list
-  playerList.addEventListener("dragover", e => e.preventDefault());
-  playerList.addEventListener("drop", handleDrop);
 }
 
-// 🟢 Drag start event
-function handleDragStart(e) {
-  dragged = e.target;
-  e.dataTransfer.setData("text/plain", e.target.textContent);
-}
-
-// 🟢 Handle drop logic (field <-> list)
+// Handle player drop onto the field
 function handleDrop(e) {
   e.preventDefault();
-  const target = e.currentTarget;
-  const draggedText = e.dataTransfer.getData("text/plain");
+  const playerName = e.dataTransfer.getData("text/plain");
+  const dropZone = e.target.closest(".drop-zone");
 
-  // Dropping on field zone
-  if (target.classList.contains("dropzone")) {
-    if (target.textContent.trim()) {
-      const temp = target.textContent;
-      target.textContent = draggedText;
+  if (!dropZone || !playerName) return;
 
-      if (dragged.classList.contains("dropzone")) {
-        dragged.textContent = temp;
-      } else if (dragged.parentElement === playerList) {
-        dragged.remove();
-        createListItem(temp);
+  // Remove player from old position if already placed
+  for (const pos in playersOnField) {
+    if (playersOnField[pos] === playerName) {
+      delete playersOnField[pos];
+      break;
+    }
+  }
+
+  playersOnField[dropZone.dataset.position] = playerName;
+
+  // Remove from Position Players list
+  const positionList = document.getElementById("positionPlayers");
+  const playerItem = positionList.querySelector(`[data-name="${playerName}"]`);
+  if (playerItem) playerItem.remove();
+
+  // Add to the field visually
+  dropZone.innerHTML = "";
+  const playerDiv = createDraggablePlayer(playerName);
+  playerDiv.classList.add("on-field");
+  dropZone.appendChild(playerDiv);
+
+  // Make the player draggable back off the field
+  playerDiv.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", playerName);
+    dropZone.innerHTML = ""; // clear from field
+    delete playersOnField[dropZone.dataset.position];
+    updatePlayerPositionInLineup(playerName, null);
+    // put player back in position list
+    const newPlayer = createDraggablePlayer(playerName);
+    document.getElementById("positionPlayers").appendChild(newPlayer);
+  });
+
+  // Update lineup with position label
+  updatePlayerPositionInLineup(playerName, dropZone.dataset.position);
+}
+
+// Update the position next to a player's name in the batting order
+function updatePlayerPositionInLineup(playerName, positionName) {
+  const orderItems = document.querySelectorAll(".order-item");
+  orderItems.forEach((item) => {
+    if (item.dataset.name === playerName) {
+      const existing = item.querySelector(".lineup-position");
+      if (existing) existing.remove();
+      if (positionName) {
+        const posLabel = document.createElement("span");
+        posLabel.classList.add("lineup-position");
+        posLabel.textContent = positionName;
+        item.appendChild(posLabel);
       }
-    } else {
-      target.textContent = draggedText;
-      if (dragged.classList.contains("dropzone")) dragged.textContent = "";
-      else dragged.remove();
+    }
+  });
+}
+
+// Add player button logic
+function setupAddPlayerButton() {
+  document.getElementById("addPlayerBtn").addEventListener("click", () => {
+    const name = prompt("Enter player name:");
+    if (name) addPlayerToLists(name);
+  });
+}
+
+// Add player to lineup and position list
+function addPlayerToLists(name) {
+  playerCount++;
+
+  const orderList = document.getElementById("battingOrder");
+  const orderItem = document.createElement("div");
+  orderItem.classList.add("order-item");
+  orderItem.dataset.name = name;
+  orderItem.textContent = `${playerCount}. ${name}`;
+
+  const removeBtn = document.createElement("span");
+  removeBtn.classList.add("remove-player");
+  removeBtn.textContent = "✖";
+  removeBtn.addEventListener("click", () => removePlayer(name, orderItem));
+
+  orderItem.appendChild(removeBtn);
+  orderList.appendChild(orderItem);
+
+  // Add to position players list
+  const positionPlayers = document.getElementById("positionPlayers");
+  const playerDiv = createDraggablePlayer(name);
+  positionPlayers.appendChild(playerDiv);
+}
+
+// Remove player from lineup and field
+function removePlayer(name, orderItem) {
+  orderItem.remove();
+
+  // Remove from field if present
+  for (const pos in playersOnField) {
+    if (playersOnField[pos] === name) {
+      const zone = document.querySelector(`[data-position="${pos}"]`);
+      if (zone) zone.innerHTML = "";
+      delete playersOnField[pos];
     }
   }
 
-  // Dropping back to list
-  else if (target.id === "playerList") {
-    if (![...playerList.children].some(li => li.textContent === draggedText)) {
-      createListItem(draggedText);
-    }
-    if (dragged.classList.contains("dropzone")) dragged.textContent = "";
-    else dragged.remove();
-  }
+  // Remove from position players list
+  const positionList = document.getElementById("positionPlayers");
+  const playerItem = positionList.querySelector(`[data-name="${name}"]`);
+  if (playerItem) playerItem.remove();
 }
 
-// 🟢 Create new draggable list item
-function createListItem(name) {
-  const li = document.createElement("li");
-  li.textContent = name;
-  li.draggable = true;
-  li.addEventListener("dragstart", handleDragStart);
-  playerList.appendChild(li);
-}
+// Switch between 9- and 10-player field
+function setupSwitchButton() {
+  const switchBtn = document.getElementById("switchFieldBtn");
+  switchBtn.addEventListener("click", () => {
+    // Return any players currently on the field to the position list
+    Object.values(playersOnField).forEach((playerName) => {
+      const existing = document.querySelector(`#positionPlayers [data-name="${playerName}"]`);
+      if (!existing) {
+        const playerDiv = createDraggablePlayer(playerName);
+        document.getElementById("positionPlayers").appendChild(playerDiv);
+      }
+      updatePlayerPositionInLineup(playerName, null);
+    });
+    playersOnField = {};
 
-// 🟢 Add new player
-addPlayerBtn.addEventListener("click", () => {
-  const name = prompt("Enter player name:");
-  if (!name) return;
-
-  createListItem(name);
-
-  const liOrder = document.createElement("li");
-  liOrder.classList.add("order-item");
-  liOrder.textContent = name;
-
-  // Add delete button ❌
-  const removeBtn = document.createElement("button");
-  removeBtn.textContent = "❌";
-  removeBtn.className = "remove-btn";
-  removeBtn.addEventListener("click", () => removePlayer(name));
-
-  liOrder.appendChild(removeBtn);
-  battingOrder.appendChild(liOrder);
-
-  liOrder.draggable = true;
-  liOrder.addEventListener("dragstart", handleDragStart);
-});
-
-// 🟢 Remove player entirely (from lists and field)
-function removePlayer(name) {
-  // Remove from batting order
-  [...battingOrder.children].forEach(li => {
-    if (li.textContent.includes(name)) li.remove();
-  });
-
-  // Remove from position player list
-  [...playerList.children].forEach(li => {
-    if (li.textContent === name) li.remove();
-  });
-
-  // Clear from field if currently placed
-  [...document.querySelectorAll(".dropzone")].forEach(zone => {
-    if (zone.textContent === name) zone.textContent = "";
+    // Toggle field type
+    isTenPlayerField = !isTenPlayerField;
+    fieldZones = isTenPlayerField ? [...tenFieldZones] : [...nineFieldZones];
+    createField();
+    switchBtn.textContent = isTenPlayerField
+      ? "Switch to 9-Player Field"
+      : "Switch to 10-Player Field";
   });
 }
-
-// 🟢 Toggle between 9 and 10 player modes
-toggleFieldBtn.addEventListener("click", () => {
-  // Get all players currently on field
-  const fieldPlayers = [...document.querySelectorAll(".dropzone")]
-    .map(zone => zone.textContent)
-    .filter(n => n.trim() !== "");
-
-  // Add them back to the player list
-  fieldPlayers.forEach(p => {
-    if (![...playerList.children].some(li => li.textContent === p)) {
-      createListItem(p);
-    }
-  });
-
-  // Switch field mode
-  tenPlayerMode = !tenPlayerMode;
-  toggleFieldBtn.textContent = tenPlayerMode
-    ? "Switch to 9-Player Field"
-    : "Switch to 10-Player Field";
-
-  // Rebuild the field (clears all zones)
-  buildField();
-});
-
-new Sortable(battingOrder, { animation: 150 });
-new Sortable(playerList, { animation: 150 });
-
-// 🟢 Build initial 9-player field
-buildField();
