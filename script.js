@@ -1,14 +1,14 @@
-// Coordinates for 9 dropzones on the field
+// Coordinates adjusted for larger field (700px wide)
 const fieldZones = [
-  { x: 195, y: 230 }, // C
-  { x: 195, y: 190 }, // P
-  { x: 290, y: 150 }, // 1B
-  { x: 235, y: 120 }, // 2B
-  { x: 155, y: 120 }, // SS
-  { x: 100, y: 150 }, // 3B
-  { x: 70, y: 60 },  // LF
-  { x: 195, y: 30 }, // CF
-  { x: 320, y: 60 }  // RF
+  { x: 310, y: 410 }, // C
+  { x: 310, y: 330 }, // P
+  { x: 480, y: 250 }, // 1B
+  { x: 360, y: 180 }, // 2B
+  { x: 250, y: 180 }, // SS
+  { x: 140, y: 250 }, // 3B
+  { x: 80, y: 90 },   // LF
+  { x: 310, y: 30 },  // CF
+  { x: 530, y: 90 }   // RF
 ];
 
 document.getElementById("generateBtn").addEventListener("click", () => {
@@ -31,12 +31,12 @@ document.getElementById("generateBtn").addEventListener("click", () => {
 
     const li2 = document.createElement("li");
     li2.textContent = name;
+    li2.draggable = true;
     playerList.appendChild(li2);
   });
 
-  // Make lists draggable
+  // Make batting order sortable
   new Sortable(battingOrder, { animation: 150 });
-  new Sortable(playerList, { animation: 150 });
 
   // Create blank drop zones on field
   const positionsDiv = document.getElementById("positions");
@@ -49,16 +49,26 @@ document.getElementById("generateBtn").addEventListener("click", () => {
     positionsDiv.appendChild(drop);
   });
 
-  // Allow dragging from player list to field
+  // Logic for dragging players onto field & swapping
   let dragged = null;
-  playerList.addEventListener("dragstart", e => (dragged = e.target));
 
+  // From list
+  playerList.addEventListener("dragstart", e => {
+    dragged = e.target;
+  });
+
+  // From field
+  document.getElementById("positions").addEventListener("dragstart", e => {
+    if (e.target.classList.contains("dropzone") && e.target.textContent.trim() !== "") {
+      dragged = e.target;
+      e.dataTransfer.setData("text/plain", e.target.textContent);
+    }
+  });
+
+  // Handle drop
   document.querySelectorAll(".dropzone").forEach(zone => {
     zone.addEventListener("dragover", e => e.preventDefault());
     zone.addEventListener("drop", e => {
       e.preventDefault();
-      zone.textContent = dragged.textContent;
-    });
-  });
-});
+      if (!
 
