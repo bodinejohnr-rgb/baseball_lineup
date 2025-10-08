@@ -1,48 +1,24 @@
 // Coordinates for 9 field positions
 const fieldZones = [
-  { x: 310, y: 440 }, // C
-  { x: 310, y: 390 }, // P
-  { x: 470, y: 330 }, // 1B
-  { x: 370, y: 270 }, // 2B
-  { x: 240, y: 270 }, // SS
-  { x: 160, y: 330 }, // 3B
-  { x: 120, y: 180 }, // LF
-  { x: 310, y: 130 }, // CF
-  { x: 500, y: 180 }  // RF
+  { x: 340, y: 480 }, // C
+  { x: 340, y: 420 }, // P
+  { x: 530, y: 350 }, // 1B
+  { x: 400, y: 280 }, // 2B
+  { x: 250, y: 280 }, // SS
+  { x: 150, y: 350 }, // 3B
+  { x: 100, y: 170 }, // LF
+  { x: 340, y: 110 }, // CF
+  { x: 550, y: 170 }  // RF
 ];
 
-document.getElementById("generateBtn").addEventListener("click", () => {
-  const names = document.getElementById("playerInput").value
-    .split("\n")
-    .map(n => n.trim())
-    .filter(n => n !== "");
+const battingOrder = document.getElementById("battingOrder");
+const playerList = document.getElementById("playerList");
+const positionsDiv = document.getElementById("positions");
+const addPlayerBtn = document.getElementById("addPlayerBtn");
 
-  if (names.length === 0) return alert("Please enter at least one player.");
-
-  const battingOrder = document.getElementById("battingOrder");
-  const playerList = document.getElementById("playerList");
-  const positionsDiv = document.getElementById("positions");
-
-  battingOrder.innerHTML = "";
-  playerList.innerHTML = "";
+// Initialize drag/drop and dropzones
+function initField() {
   positionsDiv.innerHTML = "";
-
-  // Add players to lists
-  names.forEach(name => {
-    const li1 = document.createElement("li");
-    li1.textContent = name;
-    battingOrder.appendChild(li1);
-
-    const li2 = document.createElement("li");
-    li2.textContent = name;
-    playerList.appendChild(li2);
-  });
-
-  // Make both lists draggable
-  new Sortable(battingOrder, { animation: 150 });
-  new Sortable(playerList, { animation: 150 });
-
-  // Create blank dropzones
   fieldZones.forEach(pos => {
     const zone = document.createElement("div");
     zone.className = "dropzone";
@@ -50,32 +26,28 @@ document.getElementById("generateBtn").addEventListener("click", () => {
     zone.style.top = `${pos.y}px`;
     positionsDiv.appendChild(zone);
   });
+  enableDragDrop();
+}
 
-  // Drag/drop logic
+// Create drag/drop behavior
+function enableDragDrop() {
   let dragged = null;
 
-  // When dragging from list
-  playerList.addEventListener("dragstart", e => {
-    dragged = e.target;
-  });
+  playerList.addEventListener("dragstart", e => (dragged = e.target));
 
-  // Make zones accept drops
   document.querySelectorAll(".dropzone").forEach(zone => {
     zone.addEventListener("dragover", e => e.preventDefault());
 
     zone.addEventListener("drop", e => {
       e.preventDefault();
-
       if (!dragged) return;
 
       const currentName = zone.textContent.trim();
 
-      // If this zone already has a player, swap them
+      // If a player already exists, swap them
       if (currentName && currentName !== dragged.textContent) {
-        // Find the zone that currently holds the dragged name
-        const allZones = document.querySelectorAll(".dropzone");
-        const otherZone = Array.from(allZones).find(z => z.textContent.trim() === dragged.textContent);
-
+        const otherZone = Array.from(document.querySelectorAll(".dropzone"))
+          .find(z => z.textContent.trim() === dragged.textContent);
         if (otherZone) otherZone.textContent = currentName;
         zone.textContent = dragged.textContent;
       } else {
@@ -85,5 +57,27 @@ document.getElementById("generateBtn").addEventListener("click", () => {
       }
     });
   });
+}
+
+// Add player dynamically
+addPlayerBtn.addEventListener("click", () => {
+  const name = prompt("Enter player name:");
+  if (!name) return;
+
+  // Create new batting order entry
+  const li1 = document.createElement("li");
+  li1.textContent = name;
+  battingOrder.appendChild(li1);
+
+  // Create new position player entry
+  const li2 = document.createElement("li");
+  li2.textContent = name;
+  playerList.appendChild(li2);
 });
 
+// Make lists sortable (draggable)
+new Sortable(battingOrder, { animation: 150 });
+new Sortable(playerList, { animation: 150 });
+
+// Initialize field on load
+initField();
