@@ -10,7 +10,7 @@
 * { box-sizing: border-box; }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: Roboto, sans-serif;
   background: #f5f2e7; /* light beige */
   color: var(--text);
   margin: 0;
@@ -35,32 +35,36 @@ h2{ margin: 0 0 10px; }
   border-radius:10px;
   padding:12px;
 }
-.field-container{
-  position:relative;
-  width: 750px;     /* big field */
-  height: auto;
-}
-.field{
-  display:block;
-  width:100%;
-  border-radius:8px;
+.field-container {
+  position: relative;
+  width: 750px;
+  height: auto;   /* 👈 new line — set a height so drop zones show */
 }
 
-/* Drop zones (blank white boxes) */
-.drop-zone{
-  position:absolute;
-  width:90px;
-  height:30px;
-  background:#fff;
-  border:2px dashed #bbb;
-  border-radius:6px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  cursor:grab;
-  user-select:none;
+.field {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1; /* ensures image stays behind the boxes */
 }
+
+.drop-zone {
+  position: absolute;
+  width: 90px;
+  height: 30px;
+  background: #fff;
+  border: 2px dashed #bbb;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
+  z-index: 2; /* 👈 ensures zones appear above image */
+}
+
 
 /* Right column */
 .right-col{
