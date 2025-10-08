@@ -10,9 +10,9 @@
 * { box-sizing: border-box; }
 
 body {
-  font-family: Roboto, sans-serif;
-  background: #f5f2e7; /* light beige */
-  color: var(--text);
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(180deg, #e6e9ef 0%, #ffffff 100%);
+  color: #222;
   margin: 0;
   padding: 16px;
   text-align: center;
