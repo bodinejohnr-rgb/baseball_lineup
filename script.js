@@ -3,8 +3,8 @@ let tenPlayerMode = false;
 // Coordinates for 9-player and 10-player fields
 const nineFieldZones = [
   { x: 340, y: 480 }, // C
-  { x: 340, y: 420 }, // P
-  { x: 530, y: 350 }, // 1B
+  { x: 340, y: 400 }, // P
+  { x: 500, y: 350 }, // 1B
   { x: 400, y: 280 }, // 2B
   { x: 250, y: 280 }, // SS
   { x: 150, y: 350 }, // 3B
@@ -15,8 +15,8 @@ const nineFieldZones = [
 
 const tenFieldZones = [
   { x: 340, y: 480 }, // C
-  { x: 340, y: 420 }, // P
-  { x: 530, y: 350 }, // 1B
+  { x: 340, y: 400 }, // P
+  { x: 500, y: 350 }, // 1B
   { x: 400, y: 280 }, // 2B
   { x: 250, y: 280 }, // SS
   { x: 150, y: 350 }, // 3B
