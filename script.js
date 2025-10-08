@@ -1,14 +1,14 @@
-// Coordinates adjusted for larger field (700px wide)
+// Coordinates for 9 field positions
 const fieldZones = [
-  { x: 310, y: 410 }, // C
-  { x: 310, y: 330 }, // P
-  { x: 480, y: 250 }, // 1B
-  { x: 360, y: 180 }, // 2B
-  { x: 250, y: 180 }, // SS
-  { x: 140, y: 250 }, // 3B
-  { x: 80, y: 90 },   // LF
-  { x: 310, y: 30 },  // CF
-  { x: 530, y: 90 }   // RF
+  { x: 310, y: 440 }, // C
+  { x: 310, y: 390 }, // P
+  { x: 470, y: 330 }, // 1B
+  { x: 370, y: 270 }, // 2B
+  { x: 240, y: 270 }, // SS
+  { x: 160, y: 330 }, // 3B
+  { x: 120, y: 180 }, // LF
+  { x: 310, y: 130 }, // CF
+  { x: 500, y: 180 }  // RF
 ];
 
 document.getElementById("generateBtn").addEventListener("click", () => {
@@ -17,13 +17,17 @@ document.getElementById("generateBtn").addEventListener("click", () => {
     .map(n => n.trim())
     .filter(n => n !== "");
 
-  // Clear previous lists
+  if (names.length === 0) return alert("Please enter at least one player.");
+
   const battingOrder = document.getElementById("battingOrder");
   const playerList = document.getElementById("playerList");
+  const positionsDiv = document.getElementById("positions");
+
   battingOrder.innerHTML = "";
   playerList.innerHTML = "";
+  positionsDiv.innerHTML = "";
 
-  // Add players to both lists
+  // Add players to lists
   names.forEach(name => {
     const li1 = document.createElement("li");
     li1.textContent = name;
@@ -31,44 +35,55 @@ document.getElementById("generateBtn").addEventListener("click", () => {
 
     const li2 = document.createElement("li");
     li2.textContent = name;
-    li2.draggable = true;
     playerList.appendChild(li2);
   });
 
-  // Make batting order sortable
+  // Make both lists draggable
   new Sortable(battingOrder, { animation: 150 });
+  new Sortable(playerList, { animation: 150 });
 
-  // Create blank drop zones on field
-  const positionsDiv = document.getElementById("positions");
-  positionsDiv.innerHTML = "";
+  // Create blank dropzones
   fieldZones.forEach(pos => {
-    const drop = document.createElement("div");
-    drop.className = "dropzone";
-    drop.style.left = `${pos.x}px`;
-    drop.style.top = `${pos.y}px`;
-    positionsDiv.appendChild(drop);
+    const zone = document.createElement("div");
+    zone.className = "dropzone";
+    zone.style.left = `${pos.x}px`;
+    zone.style.top = `${pos.y}px`;
+    positionsDiv.appendChild(zone);
   });
 
-  // Logic for dragging players onto field & swapping
+  // Drag/drop logic
   let dragged = null;
 
-  // From list
+  // When dragging from list
   playerList.addEventListener("dragstart", e => {
     dragged = e.target;
   });
 
-  // From field
-  document.getElementById("positions").addEventListener("dragstart", e => {
-    if (e.target.classList.contains("dropzone") && e.target.textContent.trim() !== "") {
-      dragged = e.target;
-      e.dataTransfer.setData("text/plain", e.target.textContent);
-    }
-  });
-
-  // Handle drop
+  // Make zones accept drops
   document.querySelectorAll(".dropzone").forEach(zone => {
     zone.addEventListener("dragover", e => e.preventDefault());
+
     zone.addEventListener("drop", e => {
       e.preventDefault();
-      if (!
+
+      if (!dragged) return;
+
+      const currentName = zone.textContent.trim();
+
+      // If this zone already has a player, swap them
+      if (currentName && currentName !== dragged.textContent) {
+        // Find the zone that currently holds the dragged name
+        const allZones = document.querySelectorAll(".dropzone");
+        const otherZone = Array.from(allZones).find(z => z.textContent.trim() === dragged.textContent);
+
+        if (otherZone) otherZone.textContent = currentName;
+        zone.textContent = dragged.textContent;
+      } else {
+        // Normal drop
+        zone.textContent = dragged.textContent;
+        dragged.remove(); // remove from list
+      }
+    });
+  });
+});
 
