@@ -209,9 +209,35 @@ POS_LIST.addEventListener("drop", e => {
 /* =========================
    UI: Add player & toggle
    ========================= */
-
 ADD_BTN.addEventListener("click", () => {
   const name = (prompt("Enter player name:") || "").trim();
   if (!name) return;
   addToLineup(name);
-  POS_LIST.appendChild(makePlayerCard(nam_
+  POS_LIST.appendChild(makePlayerCard(name));
+});
+
+// toggle between 9 and 10-player field
+TOGGLE_BTN.addEventListener("click", () => {
+  isTen = !isTen;
+  TOGGLE_BTN.textContent = isTen
+    ? "Switch to 9-Player Field"
+    : "Switch to 10-Player Field";
+
+  // move any players on field back to list before rebuild
+  for (const pos in playersOnField) {
+    const name = playersOnField[pos];
+    if (!POS_LIST.querySelector(`[data-name="${name}"]`)) {
+      POS_LIST.appendChild(makePlayerCard(name));
+    }
+  }
+  playersOnField = {};
+  buildField();
+});
+
+// enable drag-to-reorder for batting order
+new Sortable(ORDER, {
+  animation: 150,
+  draggable: ".order-item",
+  handle: ".order-item",
+  filter: ".remove-player",
+});
