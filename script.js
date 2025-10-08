@@ -14,10 +14,10 @@ const nineFieldZones = [
   { label: "1B", x: 550, y: 355 },
   { label: "2B", x: 415, y: 280 },
   { label: "SS", x: 245, y: 280 },
-  { label: "3B", x: 130, y: 345 },
-  { label: "LF", x: 80, y: 190 },
+  { label: "3B", x: 160, y: 355 },
+  { label: "LF", x: 80, y: 230 },
   { label: "CF", x: 340, y: 100 },
-  { label: "RF", x: 580, y: 190 }
+  { label: "RF", x: 560, y: 230 }
 ];
 
 const tenFieldZones = [
@@ -26,11 +26,11 @@ const tenFieldZones = [
   { label: "1B", x: 550, y: 355 },
   { label: "2B", x: 415, y: 280 },
   { label: "SS", x: 245, y: 280 },
-  { label: "3B", x: 130, y: 345 },
-  { label: "LF", x: 60, y: 190 },
+  { label: "3B", x: 160, y: 355 },
+  { label: "LF", x: 80, y: 230 },
   { label: "LCF", x: 230, y: 140 },
-  { label: "CF", x: 410, y: 100 },
-  { label: "RF", x: 590, y: 190 }
+  { label: "CF", x: 410, y: 140 },
+  { label: "RF", x: 560, y: 230 }
 ];
 
 // Initial setup
