@@ -15,29 +15,29 @@ let playersOnField = {};           // { positionLabel: playerName }
 
 // Field coordinates (tuned to your screenshot)
 const nineField = [
-  { label:"C",  x:340, y:480 },
-  { label:"P",  x:340, y:420 },
-  { label:"1B", x:550, y:355 },
+  { label:"C",  x:330, y:480 },
+  { label:"P",  x:330, y:380 },
+  { label:"1B", x:500, y:355 },
   { label:"2B", x:415, y:280 },
   { label:"SS", x:245, y:280 },
-  { label:"3B", x:130, y:345 },
-  { label:"LF", x: 80, y:190 },
-  { label:"CF", x:340, y:100 },
-  { label:"RF", x:580, y:190 }
+  { label:"3B", x:160, y:345 },
+  { label:"LF", x: 110, y:190 },
+  { label:"CF", x:330, y:130 },
+  { label:"RF", x:550, y:190 }
 ];
 
 // 10-player: add **LC** and rename center to **RC**
 const tenField = [
-  { label:"C",  x:340, y:480 },
-  { label:"P",  x:340, y:420 },
-  { label:"1B", x:550, y:355 },
+  { label:"C",  x:330, y:480 },
+  { label:"P",  x:330, y:380 },
+  { label:"1B", x:500, y:355 },
   { label:"2B", x:415, y:280 },
   { label:"SS", x:245, y:280 },
-  { label:"3B", x:130, y:345 },
-  { label:"LF", x: 60, y:190 },
-  { label:"LC", x:230, y:140 },   // left-center
-  { label:"RC", x:410, y:100 },   // right-center (was CF)
-  { label:"RF", x:590, y:190 }
+  { label:"3B", x:160, y:345 },
+  { label:"LF", x: 110, y:210 },
+  { label:"LC", x:245, y:140 },  
+  { label:"RC", x:415, y:140 },   
+  { label:"RF", x:530, y:210 }
 ];
 
 /* =========================
