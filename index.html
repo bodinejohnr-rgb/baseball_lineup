@@ -10,20 +10,29 @@
   <h1>⚾ Baseball Lineup Creator</h1>
   
   <div class="container">
+    <!-- Input area -->
     <div class="input-section">
       <h2>Enter Player Names</h2>
       <textarea id="playerInput" placeholder="Enter up to 10 players, one per line"></textarea>
       <button id="generateBtn">Generate Players</button>
     </div>
 
+    <!-- Field -->
     <div class="field-container">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Baseball_diamond_clean.svg" class="field" />
+      <img src="Baseball Field.jpg" class="field" alt="Baseball Field">
       <div id="positions"></div>
     </div>
 
-    <div class="order-section">
-      <h2>Batting Order</h2>
-      <ul id="battingOrder" class="sortable"></ul>
+    <!-- Lists -->
+    <div class="lists">
+      <div>
+        <h2>Batting Order</h2>
+        <ul id="battingOrder" class="sortable"></ul>
+      </div>
+      <div>
+        <h2>Position Players</h2>
+        <ul id="playerList" class="sortable"></ul>
+      </div>
     </div>
   </div>
 
