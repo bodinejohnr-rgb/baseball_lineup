@@ -10,13 +10,6 @@
   <h1>⚾ Baseball Lineup Creator</h1>
 
   <div class="container">
-    <!-- Input -->
-    <div class="input-section">
-      <h2>Enter Player Names</h2>
-      <textarea id="playerInput" placeholder="Enter one name per line"></textarea>
-      <button id="generateBtn">Generate Players</button>
-    </div>
-
     <!-- Field -->
     <div class="field-container">
       <img src="Baseball Field.jpg" class="field" alt="Baseball Field">
@@ -28,6 +21,7 @@
       <div>
         <h2>Batting Order</h2>
         <ul id="battingOrder" class="sortable"></ul>
+        <button id="addPlayerBtn">Add Player</button>
       </div>
       <div>
         <h2>Position Players</h2>
@@ -35,9 +29,3 @@
       </div>
     </div>
   </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
-
