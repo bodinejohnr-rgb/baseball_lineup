@@ -1,49 +1,78 @@
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  background-color: #e9f7ef;
+  background-color: #e6f3e6;
+}
+
+h1 {
+  margin-bottom: 1rem;
 }
 
 .container {
   display: flex;
-  justify-content: space-around;
   flex-wrap: wrap;
+  justify-content: space-around;
   gap: 1rem;
-  margin: 1rem;
+  align-items: flex-start;
 }
 
 .field-container {
   position: relative;
+  width: 450px;
 }
 
 .field {
-  width: 300px;
+  width: 100%;
   border-radius: 8px;
   border: 2px solid #4caf50;
 }
 
-.position {
+.dropzone {
   position: absolute;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 5px;
-  border-radius: 5px;
-  cursor: grab;
+  width: 60px;
+  height: 25px;
+  background: white;
+  border: 2px dashed #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .input-section textarea {
-  width: 200px;
+  width: 180px;
   height: 150px;
 }
 
-#battingOrder {
+ul {
   list-style: none;
   padding: 0;
 }
 
-#battingOrder li {
+li {
   background: white;
   border: 1px solid #ccc;
   padding: 5px;
   margin-bottom: 5px;
   cursor: grab;
+  text-align: left;
+}
+
+/* Two lists side by side */
+.lists {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Numbered batting order */
+#battingOrder li::before {
+  counter-increment: player;
+  content: counter(player) ". ";
+  font-weight: bold;
+}
+#battingOrder {
+  counter-reset: player;
 }
