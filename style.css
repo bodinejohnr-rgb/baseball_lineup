@@ -127,3 +127,23 @@ button:hover {
   text-align: left;
   cursor: grab;
 }
+
+.lineup-position {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: #333;
+  opacity: 0.8;
+}
+.order-item {
+  position: relative;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 5px 30px 5px 8px; /* extra space on right for position text */
+  margin-bottom: 5px;
+  border-radius: 3px;
+  text-align: left;
+  cursor: grab;
+}
