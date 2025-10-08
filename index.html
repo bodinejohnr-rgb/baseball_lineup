@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Lineup Creator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>⚾ Baseball Lineup Creator</h1>
+  
+  <div class="container">
+    <div class="input-section">
+      <h2>Enter Player Names</h2>
+      <textarea id="playerInput" placeholder="Enter up to 10 players, one per line"></textarea>
+      <button id="generateBtn">Generate Players</button>
+    </div>
+
+    <div class="field-container">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Baseball_diamond_clean.svg" class="field" />
+      <div id="positions"></div>
+    </div>
+
+    <div class="order-section">
+      <h2>Batting Order</h2>
+      <ul id="battingOrder" class="sortable"></ul>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
