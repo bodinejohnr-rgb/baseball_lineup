@@ -1,5 +1,7 @@
-// Coordinates for 9 field positions
-const fieldZones = [
+let tenPlayerMode = false;
+
+// Field layouts
+const nineFieldZones = [
   { x: 340, y: 480 }, // C
   { x: 340, y: 420 }, // P
   { x: 530, y: 350 }, // 1B
@@ -11,52 +13,106 @@ const fieldZones = [
   { x: 550, y: 170 }  // RF
 ];
 
+const tenFieldZones = [
+  ...nineFieldZones,
+  { x: 225, y: 150 }  // LCF (extra outfielder)
+];
+
 const battingOrder = document.getElementById("battingOrder");
 const playerList = document.getElementById("playerList");
 const positionsDiv = document.getElementById("positions");
 const addPlayerBtn = document.getElementById("addPlayerBtn");
+const toggleFieldBtn = document.getElementById("toggleFieldBtn");
 
-// Initialize drag/drop and dropzones
-function initField() {
+// Create or rebuild field
+function buildField() {
   positionsDiv.innerHTML = "";
-  fieldZones.forEach(pos => {
+  const zones = tenPlayerMode ? tenFieldZones : nineFieldZones;
+
+  zones.forEach(pos => {
     const zone = document.createElement("div");
     zone.className = "dropzone";
+    zone.draggable = true;
     zone.style.left = `${pos.x}px`;
     zone.style.top = `${pos.y}px`;
+    zone.addEventListener("dragstart", handleDragStart);
     positionsDiv.appendChild(zone);
   });
+
   enableDragDrop();
 }
 
-// Create drag/drop behavior
+// Allow drag/drop between all areas
 function enableDragDrop() {
-  let dragged = null;
+  const allZones = document.querySelectorAll(".dropzone");
+  const allLists = [playerList, ...allZones];
 
-  playerList.addEventListener("dragstart", e => (dragged = e.target));
-
-  document.querySelectorAll(".dropzone").forEach(zone => {
+  allLists.forEach(zone => {
     zone.addEventListener("dragover", e => e.preventDefault());
-
-    zone.addEventListener("drop", e => {
-      e.preventDefault();
-      if (!dragged) return;
-
-      const currentName = zone.textContent.trim();
-
-      // If a player already exists, swap them
-      if (currentName && currentName !== dragged.textContent) {
-        const otherZone = Array.from(document.querySelectorAll(".dropzone"))
-          .find(z => z.textContent.trim() === dragged.textContent);
-        if (otherZone) otherZone.textContent = currentName;
-        zone.textContent = dragged.textContent;
-      } else {
-        // Normal drop
-        zone.textContent = dragged.textContent;
-        dragged.remove(); // remove from list
-      }
-    });
+    zone.addEventListener("drop", handleDrop);
   });
+}
+
+// Store dragged element globally
+let dragged = null;
+
+// Handle drag start for any draggable
+function handleDragStart(e) {
+  dragged = e.target;
+  e.dataTransfer.setData("text/plain", e.target.textContent);
+}
+
+// Handle drop logic
+function handleDrop(e) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  const draggedText = e.dataTransfer.getData("text/plain");
+
+  // Swapping players between field zones
+  if (target.classList.contains("dropzone")) {
+    if (target.textContent.trim()) {
+      const temp = target.textContent;
+      target.textContent = draggedText;
+
+      // Find the zone or list where the dragged item came from
+      if (dragged.classList.contains("dropzone")) {
+        dragged.textContent = temp;
+      } else if (dragged.parentElement === playerList) {
+        // If dragged from list, replace the list entry
+        dragged.remove();
+        const li = document.createElement("li");
+        li.textContent = temp;
+        li.draggable = true;
+        li.addEventListener("dragstart", handleDragStart);
+        playerList.appendChild(li);
+      }
+    } else {
+      // Normal drop (empty zone)
+      target.textContent = draggedText;
+      if (dragged.classList.contains("dropzone")) {
+        dragged.textContent = "";
+      } else {
+        dragged.remove();
+      }
+    }
+  }
+
+  // Dropping a player back to the list
+  else if (target.id === "playerList") {
+    if (!Array.from(playerList.children).some(li => li.textContent === draggedText)) {
+      const li = document.createElement("li");
+      li.textContent = draggedText;
+      li.draggable = true;
+      li.addEventListener("dragstart", handleDragStart);
+      playerList.appendChild(li);
+    }
+
+    if (dragged.classList.contains("dropzone")) {
+      dragged.textContent = "";
+    } else {
+      dragged.remove();
+    }
+  }
 }
 
 // Add player dynamically
@@ -64,20 +120,30 @@ addPlayerBtn.addEventListener("click", () => {
   const name = prompt("Enter player name:");
   if (!name) return;
 
-  // Create new batting order entry
   const li1 = document.createElement("li");
   li1.textContent = name;
+  li1.draggable = true;
+  li1.addEventListener("dragstart", handleDragStart);
   battingOrder.appendChild(li1);
 
-  // Create new position player entry
   const li2 = document.createElement("li");
   li2.textContent = name;
+  li2.draggable = true;
+  li2.addEventListener("dragstart", handleDragStart);
   playerList.appendChild(li2);
 });
 
-// Make lists sortable (draggable)
+// Toggle between 9 and 10 player fields
+toggleFieldBtn.addEventListener("click", () => {
+  tenPlayerMode = !tenPlayerMode;
+  toggleFieldBtn.textContent = tenPlayerMode
+    ? "Switch to 9-Player Field"
+    : "Switch to 10-Player Field";
+  buildField();
+});
+
 new Sortable(battingOrder, { animation: 150 });
 new Sortable(playerList, { animation: 150 });
 
-// Initialize field on load
-initField();
+// Build initial 9-player field
+buildField();
