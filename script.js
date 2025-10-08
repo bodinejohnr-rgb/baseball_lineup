@@ -241,3 +241,5 @@ new Sortable(ORDER, {
   handle: ".order-item",
   filter: ".remove-player",
 });
+
+buildField();
