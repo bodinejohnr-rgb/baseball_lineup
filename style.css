@@ -18,7 +18,7 @@ h1 {
 
 .field-container {
   position: relative;
-  width: 700px;
+  width: 750px;
 }
 
 .field {
@@ -39,11 +39,6 @@ h1 {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-}
-
-.input-section textarea {
-  width: 180px;
-  height: 150px;
 }
 
 ul {
@@ -74,4 +69,17 @@ li {
 
 #battingOrder {
   counter-reset: player;
+}
+
+button {
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #3b8e3b;
 }
