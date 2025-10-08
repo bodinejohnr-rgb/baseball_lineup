@@ -34,7 +34,7 @@ const toggleFieldBtn = document.getElementById("toggleFieldBtn");
 
 let dragged = null;
 
-// Initialize field
+// 🟢 Build the field layout
 function buildField() {
   positionsDiv.innerHTML = "";
 
@@ -54,38 +54,37 @@ function buildField() {
   setupDragDrop();
 }
 
-// Handle drag start
-function handleDragStart(e) {
-  dragged = e.target;
-  e.dataTransfer.setData("text/plain", e.target.textContent);
-}
-
-// Setup drag-and-drop between zones and list
+// 🟢 Enable drag/drop logic
 function setupDragDrop() {
-  // All drop zones on field
+  // Field zones
   document.querySelectorAll(".dropzone").forEach(zone => {
     zone.addEventListener("dragover", e => e.preventDefault());
     zone.addEventListener("drop", handleDrop);
   });
 
-  // Make playerList a drop target
+  // Position player list
   playerList.addEventListener("dragover", e => e.preventDefault());
   playerList.addEventListener("drop", handleDrop);
 }
 
+// 🟢 Drag start event
+function handleDragStart(e) {
+  dragged = e.target;
+  e.dataTransfer.setData("text/plain", e.target.textContent);
+}
+
+// 🟢 Handle drop logic (field <-> list)
 function handleDrop(e) {
   e.preventDefault();
   const target = e.currentTarget;
   const draggedText = e.dataTransfer.getData("text/plain");
 
-  // Dropping onto a field position
+  // Dropping on field zone
   if (target.classList.contains("dropzone")) {
     if (target.textContent.trim()) {
-      // Swap players
       const temp = target.textContent;
       target.textContent = draggedText;
 
-      // Find the original zone that had the dragged player
       if (dragged.classList.contains("dropzone")) {
         dragged.textContent = temp;
       } else if (dragged.parentElement === playerList) {
@@ -93,16 +92,14 @@ function handleDrop(e) {
         createListItem(temp);
       }
     } else {
-      // Empty zone
       target.textContent = draggedText;
       if (dragged.classList.contains("dropzone")) dragged.textContent = "";
       else dragged.remove();
     }
   }
 
-  // Dropping back to the list
+  // Dropping back to list
   else if (target.id === "playerList") {
-    // Add player back to list if not already there
     if (![...playerList.children].some(li => li.textContent === draggedText)) {
       createListItem(draggedText);
     }
@@ -111,7 +108,7 @@ function handleDrop(e) {
   }
 }
 
-// Helper to create draggable list items
+// 🟢 Create new draggable list item
 function createListItem(name) {
   const li = document.createElement("li");
   li.textContent = name;
@@ -120,7 +117,7 @@ function createListItem(name) {
   playerList.appendChild(li);
 }
 
-// Add player dynamically
+// 🟢 Add new player
 addPlayerBtn.addEventListener("click", () => {
   const name = prompt("Enter player name:");
   if (!name) return;
@@ -128,23 +125,66 @@ addPlayerBtn.addEventListener("click", () => {
   createListItem(name);
 
   const liOrder = document.createElement("li");
+  liOrder.classList.add("order-item");
   liOrder.textContent = name;
+
+  // Add delete button ❌
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "❌";
+  removeBtn.className = "remove-btn";
+  removeBtn.addEventListener("click", () => removePlayer(name));
+
+  liOrder.appendChild(removeBtn);
+  battingOrder.appendChild(liOrder);
+
   liOrder.draggable = true;
   liOrder.addEventListener("dragstart", handleDragStart);
-  battingOrder.appendChild(liOrder);
 });
 
-// Toggle between 9 and 10 player modes
+// 🟢 Remove player entirely (from lists and field)
+function removePlayer(name) {
+  // Remove from batting order
+  [...battingOrder.children].forEach(li => {
+    if (li.textContent.includes(name)) li.remove();
+  });
+
+  // Remove from position player list
+  [...playerList.children].forEach(li => {
+    if (li.textContent === name) li.remove();
+  });
+
+  // Clear from field if currently placed
+  [...document.querySelectorAll(".dropzone")].forEach(zone => {
+    if (zone.textContent === name) zone.textContent = "";
+  });
+}
+
+// 🟢 Toggle between 9 and 10 player modes
 toggleFieldBtn.addEventListener("click", () => {
+  // Get all players currently on field
+  const fieldPlayers = [...document.querySelectorAll(".dropzone")]
+    .map(zone => zone.textContent)
+    .filter(n => n.trim() !== "");
+
+  // Add them back to the player list
+  fieldPlayers.forEach(p => {
+    if (![...playerList.children].some(li => li.textContent === p)) {
+      createListItem(p);
+    }
+  });
+
+  // Switch field mode
   tenPlayerMode = !tenPlayerMode;
   toggleFieldBtn.textContent = tenPlayerMode
     ? "Switch to 9-Player Field"
     : "Switch to 10-Player Field";
+
+  // Rebuild the field (clears all zones)
   buildField();
 });
 
 new Sortable(battingOrder, { animation: 150 });
 new Sortable(playerList, { animation: 150 });
 
-// Initial load
+// 🟢 Build initial 9-player field
 buildField();
