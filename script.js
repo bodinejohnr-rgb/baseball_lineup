@@ -1,13 +1,14 @@
-const positions = [
-  { name: "P", x: 135, y: 180 },
-  { name: "C", x: 135, y: 230 },
-  { name: "1B", x: 220, y: 150 },
-  { name: "2B", x: 160, y: 110 },
-  { name: "SS", x: 110, y: 110 },
-  { name: "3B", x: 50, y: 150 },
-  { name: "LF", x: 40, y: 60 },
-  { name: "CF", x: 135, y: 40 },
-  { name: "RF", x: 230, y: 60 }
+// Coordinates for 9 dropzones on the field
+const fieldZones = [
+  { x: 195, y: 230 }, // C
+  { x: 195, y: 190 }, // P
+  { x: 290, y: 150 }, // 1B
+  { x: 235, y: 120 }, // 2B
+  { x: 155, y: 120 }, // SS
+  { x: 100, y: 150 }, // 3B
+  { x: 70, y: 60 },  // LF
+  { x: 195, y: 30 }, // CF
+  { x: 320, y: 60 }  // RF
 ];
 
 document.getElementById("generateBtn").addEventListener("click", () => {
@@ -16,41 +17,48 @@ document.getElementById("generateBtn").addEventListener("click", () => {
     .map(n => n.trim())
     .filter(n => n !== "");
 
-  const positionsContainer = document.getElementById("positions");
-  positionsContainer.innerHTML = "";
+  // Clear previous lists
+  const battingOrder = document.getElementById("battingOrder");
+  const playerList = document.getElementById("playerList");
+  battingOrder.innerHTML = "";
+  playerList.innerHTML = "";
 
-  positions.forEach(pos => {
-    const div = document.createElement("div");
-    div.className = "position";
-    div.style.left = `${pos.x}px`;
-    div.style.top = `${pos.y}px`;
-    div.textContent = pos.name;
-    positionsContainer.appendChild(div);
-  });
-
-  const orderList = document.getElementById("battingOrder");
-  orderList.innerHTML = "";
-
+  // Add players to both lists
   names.forEach(name => {
-    const li = document.createElement("li");
-    li.textContent = name;
-    li.draggable = true;
-    orderList.appendChild(li);
+    const li1 = document.createElement("li");
+    li1.textContent = name;
+    battingOrder.appendChild(li1);
+
+    const li2 = document.createElement("li");
+    li2.textContent = name;
+    playerList.appendChild(li2);
   });
 
-  new Sortable(orderList, {
-    animation: 150
+  // Make lists draggable
+  new Sortable(battingOrder, { animation: 150 });
+  new Sortable(playerList, { animation: 150 });
+
+  // Create blank drop zones on field
+  const positionsDiv = document.getElementById("positions");
+  positionsDiv.innerHTML = "";
+  fieldZones.forEach(pos => {
+    const drop = document.createElement("div");
+    drop.className = "dropzone";
+    drop.style.left = `${pos.x}px`;
+    drop.style.top = `${pos.y}px`;
+    positionsDiv.appendChild(drop);
   });
 
+  // Allow dragging from player list to field
   let dragged = null;
-  orderList.addEventListener("dragstart", e => {
-    dragged = e.target;
-  });
+  playerList.addEventListener("dragstart", e => (dragged = e.target));
 
-  positionsContainer.querySelectorAll(".position").forEach(pos => {
-    pos.addEventListener("dragover", e => e.preventDefault());
-    pos.addEventListener("drop", e => {
-      pos.textContent = `${pos.textContent.split(":")[0]}: ${dragged.textContent}`;
+  document.querySelectorAll(".dropzone").forEach(zone => {
+    zone.addEventListener("dragover", e => e.preventDefault());
+    zone.addEventListener("drop", e => {
+      e.preventDefault();
+      zone.textContent = dragged.textContent;
     });
   });
 });
+
