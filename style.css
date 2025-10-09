@@ -199,3 +199,32 @@ h2{ margin: 0 0 10px; }
   filter: brightness(1.1);
   transform: translateY(-1px);
 }
+
+/* Header row for Batting Order + Date */
+.batting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.batting-header h2 {
+  margin: 0;
+}
+
+#lineupDate {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: 'Roboto', sans-serif;
+  width: 160px;
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+#lineupDate:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 3px rgba(76, 175, 80, 0.4);
+}
