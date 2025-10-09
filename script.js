@@ -244,3 +244,47 @@ new Sortable(ORDER, {
 
 buildField();
 
+/***************************************************
+ * Save lineup (Batting Order + Date) as image
+ **************************************************/
+document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
+  const container = document.querySelector(".right-col"); // capture the full right column
+  if (!container) return alert("Couldn't find lineup container!");
+
+  // Get date text from header
+  const dateText = document.getElementById("lineupDate")?.textContent.trim() || "NoDate";
+
+  // temporarily set background for better contrast
+  container.style.background = "#ffffff";
+
+  // generate image
+  const canvas = await html2canvas(container, {
+    backgroundColor: "#ffffff",
+    scale: 2,
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+
+  // ✅ create dynamic file name: "Bambinos Lineup 10.9.25.png"
+  const formattedDate = dateText.replace(/[\/\-]/g, "."); // convert slashes/dashes to periods
+  const fileName = `Bambinos Lineup ${formattedDate}.png`;
+
+  // download automatically
+  const link = document.createElement("a");
+  link.download = fileName;
+  link.href = imgData;
+  link.click();
+
+  // optional: copy to clipboard
+  if (navigator.clipboard && window.ClipboardItem) {
+    const blob = await (await fetch(imgData)).blob();
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    alert(`✅ "${fileName}" saved & copied to clipboard!`);
+  } else {
+    alert(`✅ "${fileName}" downloaded!`);
+  }
+
+  // restore transparency
+  container.style.background = "transparent";
+});
+
