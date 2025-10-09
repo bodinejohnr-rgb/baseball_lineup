@@ -119,6 +119,37 @@ function addToLineup(name){
   ORDER.appendChild(row);
 }
 
+/***************************************************
+ * DH SLOT MANAGEMENT
+ **************************************************/
+function updateDHSlots() {
+  const totalPlayers = ORDER.querySelectorAll(".order-item").length;
+  const dhArea = document.getElementById("dhArea");
+  const dhSlots = document.getElementById("dhSlots");
+
+  // show DH area only if >10 players
+  if (totalPlayers > 10) {
+    dhArea.style.display = "block";
+
+    // number of DH boxes needed
+    const numExtra = totalPlayers - 10;
+
+    // clear previous boxes
+    dhSlots.innerHTML = "";
+
+    // add boxes
+    for (let i = 0; i < numExtra; i++) {
+      const slot = document.createElement("div");
+      slot.className = "dh-slot";
+      slot.textContent = `DH ${i + 1}`;
+      dhSlots.appendChild(slot);
+    }
+  } else {
+    dhArea.style.display = "none";
+  }
+}
+
+
 // Right-aligned position label in lineup
 function updateLineupTag(name, posLabel){
   const row = ORDER.querySelector(`.order-item[data-name="${name}"]`);
