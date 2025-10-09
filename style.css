@@ -89,6 +89,9 @@ h2{ margin: 0 0 10px; }
   border-radius:4px;
   cursor:grab;
 }
+.order-item {
+  font-weight: 600;   /* makes player names bold */
+}
 .order-item::before{
   counter-increment: ordercount;
   content: counter(ordercount) ".";
@@ -96,7 +99,7 @@ h2{ margin: 0 0 10px; }
   left:10px;
   top:50%;
   transform:translateY(-50%);
-  font-weight:700;
+  font-weight:800;
 }
 .lineup-position {
   position: absolute;
