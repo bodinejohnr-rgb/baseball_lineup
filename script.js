@@ -21,7 +21,7 @@ const nineField = [
   { label:"2B", x:415, y:280 },
   { label:"SS", x:245, y:280 },
   { label:"3B", x:160, y:345 },
-  { label:"LF", x: 110, y:190 },
+  { label:"LF", x: 130, y:190 },
   { label:"CF", x:330, y:130 },
   { label:"RF", x:550, y:190 }
 ];
