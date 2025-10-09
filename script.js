@@ -8,12 +8,16 @@ const ORDER      = document.getElementById("battingOrder");
 const FIELD_WRAP = document.querySelector(".field-container");
 const ADD_BTN    = document.getElementById("addPlayerBtn");
 const TOGGLE_BTN = document.getElementById("switchFieldBtn");
+const DH_AREA    = document.getElementById("dhArea");
+const DH_SLOTS   = document.getElementById("dhSlots");
 
 // State
 let isTen = false;                 // 9 vs 10 player mode
 let playersOnField = {};           // { positionLabel: playerName }
 
-// Field coordinates (tuned to your screenshot)
+/* =========================
+   Field coordinates
+   ========================= */
 const nineField = [
   { label:"C",  x:330, y:480 },
   { label:"P",  x:330, y:380 },
@@ -21,12 +25,11 @@ const nineField = [
   { label:"2B", x:415, y:280 },
   { label:"SS", x:245, y:280 },
   { label:"3B", x:160, y:345 },
-  { label:"LF", x: 130, y:190 },
+  { label:"LF", x:130, y:190 },
   { label:"CF", x:330, y:130 },
   { label:"RF", x:550, y:190 }
 ];
 
-// 10-player: add **LC** and rename center to **RC**
 const tenField = [
   { label:"C",  x:330, y:480 },
   { label:"P",  x:330, y:380 },
@@ -34,20 +37,17 @@ const tenField = [
   { label:"2B", x:415, y:280 },
   { label:"SS", x:245, y:280 },
   { label:"3B", x:160, y:345 },
-  { label:"LF", x: 110, y:210 },
-  { label:"LC", x:245, y:140 },  
-  { label:"RC", x:415, y:140 },   
+  { label:"LF", x:110, y:210 },
+  { label:"LC", x:245, y:140 },
+  { label:"RC", x:415, y:140 },
   { label:"RF", x:530, y:210 }
 ];
 
 /* =========================
-   Field building & helpers
+   Field building
    ========================= */
-
 function buildField(){
-  // Remove any existing drop-zones but keep the image
   [...FIELD_WRAP.querySelectorAll(".drop-zone")].forEach(z => z.remove());
-
   const layout = isTen ? tenField : nineField;
   layout.forEach(pos => {
     const z = document.createElement("div");
@@ -63,7 +63,9 @@ function buildField(){
   });
 }
 
-// Create a draggable player card (used in list & on field)
+/* =========================
+   Player card helper
+   ========================= */
 function makePlayerCard(name){
   const el = document.createElement("div");
   el.className   = "player";
@@ -73,7 +75,6 @@ function makePlayerCard(name){
 
   el.addEventListener("dragstart", e => {
     e.dataTransfer.setData("text/plain", name);
-    // mark the origin (zone label if from a zone)
     const parentZone = el.closest(".drop-zone");
     e.dataTransfer.setData("fromZone", parentZone ? parentZone.dataset.pos : "");
   });
@@ -82,28 +83,23 @@ function makePlayerCard(name){
 }
 
 /* =========================
-   Batting order (lineup)
+   Add to lineup
    ========================= */
-
 function addToLineup(name){
   const row = document.createElement("div");
   row.className   = "order-item";
   row.dataset.name = name;
-  row.textContent = name;        // numbers are added by CSS ::before
+  row.textContent = name;
 
-  // tiny black ❌ outside the card
   const remove = document.createElement("button");
   remove.className = "remove-player";
   remove.title = "Remove";
   remove.textContent = "✖";
   remove.addEventListener("click", e => {
-    e.stopPropagation(); // don't start a drag
-    // remove from lineup
+    e.stopPropagation();
     row.remove();
-    // remove from position list
     const inList = POS_LIST.querySelector(`[data-name="${name}"]`);
     if (inList) inList.remove();
-    // clear from any field zone
     for (const pos in playersOnField){
       if (playersOnField[pos] === name){
         const zone = FIELD_WRAP.querySelector(`.drop-zone[data-pos="${pos}"]`);
@@ -111,46 +107,43 @@ function addToLineup(name){
         delete playersOnField[pos];
       }
     }
-    // clear lineup position tag
     updateLineupTag(name, null);
+    updateDHSlots(); // ✅ update DH box after removal
   });
 
   row.appendChild(remove);
   ORDER.appendChild(row);
+  updateDHSlots(); // ✅ update DH box after addition
 }
 
-/***************************************************
- * DH SLOT MANAGEMENT
- **************************************************/
+/* =========================
+   DH slot management
+   ========================= */
 function updateDHSlots() {
   const totalPlayers = ORDER.querySelectorAll(".order-item").length;
-  const dhArea = document.getElementById("dhArea");
-  const dhSlots = document.getElementById("dhSlots");
 
-  // show DH area only if >10 players
   if (totalPlayers > 10) {
-    dhArea.style.display = "block";
-
-    // number of DH boxes needed
+    DH_AREA.style.display = "block";
     const numExtra = totalPlayers - 10;
+    DH_SLOTS.innerHTML = "";
 
-    // clear previous boxes
-    dhSlots.innerHTML = "";
+    const players = [...ORDER.querySelectorAll(".order-item")].map(p => p.dataset.name);
+    const dhPlayers = players.slice(10); // players after 10th spot
 
-    // add boxes
-    for (let i = 0; i < numExtra; i++) {
+    dhPlayers.forEach((player, i) => {
       const slot = document.createElement("div");
       slot.className = "dh-slot";
-      slot.textContent = `DH ${i + 1}`;
-      dhSlots.appendChild(slot);
-    }
+      slot.textContent = `DH: ${player}`;
+      DH_SLOTS.appendChild(slot);
+    });
   } else {
-    dhArea.style.display = "none";
+    DH_AREA.style.display = "none";
   }
 }
 
-
-// Right-aligned position label in lineup
+/* =========================
+   Lineup position tags
+   ========================= */
 function updateLineupTag(name, posLabel){
   const row = ORDER.querySelector(`.order-item[data-name="${name}"]`);
   if (!row) return;
@@ -165,46 +158,38 @@ function updateLineupTag(name, posLabel){
 }
 
 /* =========================
-   Drag-Drop logic
+   Drag/drop logic
    ========================= */
-
 function handleDropToZone(e, targetZone){
   e.preventDefault();
-  const name    = e.dataTransfer.getData("text/plain");
+  const name = e.dataTransfer.getData("text/plain");
   if (!name) return;
 
-  const fromPos   = e.dataTransfer.getData("fromZone");   // "" if from list
+  const fromPos   = e.dataTransfer.getData("fromZone");
   const targetPos = targetZone.dataset.pos;
   const targetName = playersOnField[targetPos] || "";
 
-  // From another zone → swap
   if (fromPos){
     if (fromPos === targetPos) return;
     const fromZone = FIELD_WRAP.querySelector(`.drop-zone[data-pos="${fromPos}"]`);
-
-    // place dragged into target
     playersOnField[targetPos] = name;
     targetZone.innerHTML = "";
     targetZone.appendChild(makePlayerCard(name));
     updateLineupTag(name, targetPos);
 
-    // if target had someone, move them back to fromZone
     if (targetName){
       playersOnField[fromPos] = targetName;
       fromZone.innerHTML = "";
       fromZone.appendChild(makePlayerCard(targetName));
       updateLineupTag(targetName, fromPos);
     } else {
-      // target was empty → clear original
       delete playersOnField[fromPos];
       fromZone.innerHTML = "";
     }
     return;
   }
 
-  // From Position Players list
   if (targetName){
-    // zone occupied → send that player back to list
     POS_LIST.appendChild(makePlayerCard(targetName));
   }
 
@@ -213,16 +198,14 @@ function handleDropToZone(e, targetZone){
   targetZone.appendChild(makePlayerCard(name));
   updateLineupTag(name, targetPos);
 
-  // remove from list if present
   const inList = POS_LIST.querySelector(`[data-name="${name}"]`);
   if (inList) inList.remove();
 }
 
-// Drop back onto Position Players list
 POS_LIST.addEventListener("dragover", e => e.preventDefault());
 POS_LIST.addEventListener("drop", e => {
   e.preventDefault();
-  const name    = e.dataTransfer.getData("text/plain");
+  const name = e.dataTransfer.getData("text/plain");
   const fromPos = e.dataTransfer.getData("fromZone");
   if (!name) return;
 
@@ -238,7 +221,7 @@ POS_LIST.addEventListener("drop", e => {
 });
 
 /* =========================
-   UI: Add player & toggle
+   UI Buttons
    ========================= */
 ADD_BTN.addEventListener("click", () => {
   const name = (prompt("Enter player name:") || "").trim();
@@ -247,14 +230,12 @@ ADD_BTN.addEventListener("click", () => {
   POS_LIST.appendChild(makePlayerCard(name));
 });
 
-// toggle between 9 and 10-player field
 TOGGLE_BTN.addEventListener("click", () => {
   isTen = !isTen;
   TOGGLE_BTN.textContent = isTen
     ? "Switch to 9-Player Field"
     : "Switch to 10-Player Field";
 
-  // move any players on field back to list before rebuild
   for (const pos in playersOnField) {
     const name = playersOnField[pos];
     if (!POS_LIST.querySelector(`[data-name="${name}"]`)) {
@@ -265,27 +246,28 @@ TOGGLE_BTN.addEventListener("click", () => {
   buildField();
 });
 
-// enable drag-to-reorder for batting order
+/* =========================
+   Sortable lineup
+   ========================= */
 new Sortable(ORDER, {
   animation: 150,
   draggable: ".order-item",
   handle: ".order-item",
   filter: ".remove-player",
+  onSort: updateDHSlots // ✅ update DH slots when order changes
 });
 
 buildField();
+updateDHSlots(); // hide initially
 
-/***************************************************
- * Save lineup (clean version — only batting order + date)
- **************************************************/
+/* =========================
+   Save lineup image
+   ========================= */
 document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
-  // Select only the batting order section (header + order list)
   const header = document.querySelector(".batting-header");
   const orderList = document.querySelector("#battingOrder");
-
   if (!header || !orderList) return alert("Couldn't find batting order!");
 
-  // Create a clean wrapper for the screenshot
   const clone = document.createElement("div");
   clone.style.background = "#ffffff";
   clone.style.padding = "25px";
@@ -293,42 +275,34 @@ document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
   clone.style.width = `${orderList.offsetWidth + 50}px`;
   clone.style.fontFamily = "Roboto, sans-serif";
 
-  // Clone the header (Batting Order + Date)
   const headerClone = header.cloneNode(true);
   clone.appendChild(headerClone);
 
-  // Clone the order list, but remove the ❌ buttons
   const orderClone = orderList.cloneNode(true);
   orderClone.querySelectorAll(".remove-player").forEach(btn => btn.remove());
   clone.appendChild(orderClone);
 
-  // Temporarily add it offscreen
   document.body.appendChild(clone);
   clone.style.position = "absolute";
   clone.style.top = "-9999px";
 
-  // Create image with html2canvas
   const canvas = await html2canvas(clone, {
     backgroundColor: "#ffffff",
     scale: 2,
   });
 
   document.body.removeChild(clone);
-
   const imgData = canvas.toDataURL("image/png");
 
-  // Get the date and format filename
   const dateText = document.getElementById("lineupDate")?.textContent.trim() || "NoDate";
   const formattedDate = dateText.replace(/[\/\-]/g, ".");
   const fileName = `Bambinos Lineup ${formattedDate}.png`;
 
-  // Download image
   const link = document.createElement("a");
   link.download = fileName;
   link.href = imgData;
   link.click();
 
-  // Optional clipboard copy
   if (navigator.clipboard && window.ClipboardItem) {
     const blob = await (await fetch(imgData)).blob();
     await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
@@ -337,5 +311,4 @@ document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
     alert(`✅ "${fileName}" downloaded!`);
   }
 });
-
 
