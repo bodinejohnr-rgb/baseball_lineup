@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Baseball Lineup Creator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -20,7 +20,11 @@
 
     <!-- Right column -->
     <div class="right-col">
-      <h2>Batting Order</h2>
+      <div class="batting-header">
+        <h2>Batting Order</h2>
+        <input type="text" id="lineupDate" placeholder="Enter date (e.g. 10/8/25)" />
+      </div>
+
       <div id="battingOrder" class="order"></div>
       <button id="addPlayerBtn" class="btn primary">Add Player</button>
       <button id="saveOrderBtn" class="btn secondary">Save Lineup Image</button>
@@ -32,9 +36,9 @@
 
   <button id="switchFieldBtn" class="toggle-btn">Switch to 10-Player Field</button>
 
-  <!-- Sortable (for lineup reordering if you want later) -->
+  <!-- Sortable + html2canvas scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="script.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  
 </body>
 </html>
