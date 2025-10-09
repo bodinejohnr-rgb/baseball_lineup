@@ -243,3 +243,39 @@ new Sortable(ORDER, {
 });
 
 buildField();
+
+// =========================
+// Save batting order as image
+// =========================
+document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
+  const orderBox = document.querySelector(".order");
+  if (!orderBox) return alert("No lineup to capture!");
+
+  // temporarily highlight background for clarity (optional)
+  orderBox.style.background = "#fff";
+
+  const canvas = await html2canvas(orderBox, {
+    backgroundColor: "#ffffff",
+    scale: 2
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+
+  // download file
+  const link = document.createElement("a");
+  link.download = "batting_order.png";
+  link.href = imgData;
+  link.click();
+
+  // try copying to clipboard too
+  if (navigator.clipboard && window.ClipboardItem) {
+    const blob = await (await fetch(imgData)).blob();
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    alert("✅ Lineup image copied to clipboard!");
+  } else {
+    alert("✅ Lineup image saved as file.");
+  }
+
+  // restore style
+  orderBox.style.background = "transparent";
+});
