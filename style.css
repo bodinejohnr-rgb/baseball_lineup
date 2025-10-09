@@ -232,23 +232,23 @@ h2{ margin: 0 0 10px; }
   user-select: text;
 }
 
-/* DH section */
+/* DH section — positioned OVER the field */
 .dh-area {
   position: absolute;
-  left: 60px;
-  bottom: 40px;
-  background: rgba(255,255,255,0.9);
-  border: 2px dashed #999;
+  right: 40px;      /* Push slightly from right edge of field */
+  bottom: 40px;     /* Slightly above bottom */
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #4caf50;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   text-align: center;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .dh-area h3 {
   margin: 0 0 6px 0;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .dh-slots {
@@ -262,7 +262,7 @@ h2{ margin: 0 0 10px; }
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 4px 8px;
-  width: 100px;
   text-align: center;
   font-weight: 500;
 }
+
