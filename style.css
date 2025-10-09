@@ -210,21 +210,22 @@ h2{ margin: 0 0 10px; }
 
 .batting-header h2 {
   margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 #lineupDate {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #111;
   font-family: 'Roboto', sans-serif;
-  width: 160px;
-  text-align: center;
   outline: none;
-  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  cursor: text;
+  user-select: text;
 }
 
-#lineupDate:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 3px rgba(76, 175, 80, 0.4);
-}
