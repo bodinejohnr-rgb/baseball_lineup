@@ -109,8 +109,8 @@ h2{ margin: 0 0 10px; }
 /* tiny black close button, outside the card */
 .remove-player{
   position:absolute;
-  right:-10px;
-  top:2px;
+  right:-18px;
+  top:50%;
   color:#444;
   background:none;
   border:none;
