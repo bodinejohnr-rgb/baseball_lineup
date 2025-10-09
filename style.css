@@ -232,3 +232,37 @@ h2{ margin: 0 0 10px; }
   user-select: text;
 }
 
+/* DH section */
+.dh-area {
+  position: absolute;
+  right: 60px;
+  bottom: 40px;
+  background: rgba(255,255,255,0.9);
+  border: 2px dashed #999;
+  border-radius: 10px;
+  padding: 12px 16px;
+  text-align: center;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dh-area h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+}
+
+.dh-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dh-slot {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 8px;
+  width: 100px;
+  text-align: center;
+  font-weight: 500;
+}
