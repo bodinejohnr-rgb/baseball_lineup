@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Baseball Lineup Creator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -10,27 +10,28 @@
   <h1>⚾ Baseball Lineup Creator</h1>
 
   <div class="layout">
-    <!-- Field -->
+    <!-- Field Section -->
     <div class="field-wrap">
       <div class="field-container">
         <img src="Baseball Field.jpg" class="field" alt="Baseball Field" />
-        <!-- drop zones are injected here -->
+        <!-- Drop zones are injected here -->
       </div>
-    
-<!-- DH Area -->
-<div id="dhArea" class="dh-area" style="display:none;">
-  <h3>DH</h3>
-  <div id="dhSlots" class="dh-slots"></div>
-</div>
+    </div>
 
-    <!-- Right column -->
+    <!-- DH Area (sits within layout but outside field-wrap) -->
+    <div id="dhArea" class="dh-area" style="display:none;">
+      <h3>DH</h3>
+      <div id="dhSlots" class="dh-slots"></div>
+    </div>
+
+    <!-- Right Column -->
     <div class="right-col">
-<div class="batting-header">
-  <h2>Batting Order <span id="lineupDate" contenteditable="true">10/9/25</span></h2>
-</div>
-
+      <div class="batting-header">
+        <h2>Batting Order <span id="lineupDate" contenteditable="true">10/9/25</span></h2>
+      </div>
 
       <div id="battingOrder" class="order"></div>
+
       <button id="addPlayerBtn" class="btn primary">Add Player</button>
       <button id="saveOrderBtn" class="btn secondary">Save Lineup Image</button>
 
@@ -39,11 +40,14 @@
     </div>
   </div>
 
+  <!-- Bottom-left toggle -->
   <button id="switchFieldBtn" class="toggle-btn">Switch to 10-Player Field</button>
 
-  <!-- Sortable + html2canvas scripts -->
+  <!-- External Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Your Script -->
   <script src="script.js"></script>
 </body>
 </html>
