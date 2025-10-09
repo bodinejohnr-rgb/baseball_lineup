@@ -11,11 +11,14 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-  background: linear-gradient(180deg, #e6e9ef 0%, #ffffff 100%);
-  color: #222;
+  background: linear-gradient(135deg, #dceeff, #f8fcff);
+  color: #111;
   margin: 0;
   padding: 16px;
   text-align: center;
+}
+:root {
+  --accent: #0077cc;
 }
 
 h1{ margin: 6px 0 16px; }
@@ -109,8 +112,9 @@ h2{ margin: 0 0 10px; }
 /* tiny black close button, outside the card */
 .remove-player{
   position:absolute;
-  right:-18px;
+  right:-24px;
   top:50%;
+  transform: translateY(-50%)
   color:#444;
   background:none;
   border:none;
