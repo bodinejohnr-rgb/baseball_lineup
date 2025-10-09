@@ -245,46 +245,59 @@ new Sortable(ORDER, {
 buildField();
 
 /***************************************************
- * Save lineup (Batting Order + Date) as image — clean version
+ * Save lineup (clean version — only batting order + date)
  **************************************************/
 document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
-  const container = document.querySelector(".batting-header").parentElement; // Only batting section
-  if (!container) return alert("Couldn't find lineup container!");
+  // Select only the batting order section (header + order list)
+  const header = document.querySelector(".batting-header");
+  const orderList = document.querySelector("#battingOrder");
 
-  // Get date text
-  const dateText = document.getElementById("lineupDate")?.textContent.trim() || "NoDate";
+  if (!header || !orderList) return alert("Couldn't find batting order!");
 
-  // Clone container so we can safely add padding just for the screenshot
-  const clone = container.cloneNode(true);
+  // Create a clean wrapper for the screenshot
+  const clone = document.createElement("div");
   clone.style.background = "#ffffff";
-  clone.style.padding = "20px";         // ✅ adds a white border margin
-  clone.style.borderRadius = "10px";    // ✅ rounded edges for cleaner look
-  clone.style.width = `${container.offsetWidth + 40}px`;
+  clone.style.padding = "25px";
+  clone.style.borderRadius = "10px";
+  clone.style.width = `${orderList.offsetWidth + 50}px`;
+  clone.style.fontFamily = "Roboto, sans-serif";
 
+  // Clone the header (Batting Order + Date)
+  const headerClone = header.cloneNode(true);
+  clone.appendChild(headerClone);
+
+  // Clone the order list, but remove the ❌ buttons
+  const orderClone = orderList.cloneNode(true);
+  orderClone.querySelectorAll(".remove-player").forEach(btn => btn.remove());
+  clone.appendChild(orderClone);
+
+  // Temporarily add it offscreen
   document.body.appendChild(clone);
   clone.style.position = "absolute";
-  clone.style.top = "-9999px"; // hide it off-screen while rendering
+  clone.style.top = "-9999px";
 
+  // Create image with html2canvas
   const canvas = await html2canvas(clone, {
     backgroundColor: "#ffffff",
     scale: 2,
   });
 
-  document.body.removeChild(clone); // remove the temporary clone
+  document.body.removeChild(clone);
 
   const imgData = canvas.toDataURL("image/png");
 
-  // ✅ "Bambinos Lineup 10.9.25.png"
+  // Get the date and format filename
+  const dateText = document.getElementById("lineupDate")?.textContent.trim() || "NoDate";
   const formattedDate = dateText.replace(/[\/\-]/g, ".");
   const fileName = `Bambinos Lineup ${formattedDate}.png`;
 
-  // Download automatically
+  // Download image
   const link = document.createElement("a");
   link.download = fileName;
   link.href = imgData;
   link.click();
 
-  // Optional: copy to clipboard
+  // Optional clipboard copy
   if (navigator.clipboard && window.ClipboardItem) {
     const blob = await (await fetch(imgData)).blob();
     await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
@@ -293,4 +306,5 @@ document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
     alert(`✅ "${fileName}" downloaded!`);
   }
 });
+
 
