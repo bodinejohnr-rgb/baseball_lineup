@@ -245,37 +245,46 @@ new Sortable(ORDER, {
 buildField();
 
 /***************************************************
- * Save lineup (Batting Order + Date) as image
+ * Save lineup (Batting Order + Date) as image — clean version
  **************************************************/
 document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
-  const container = document.querySelector(".right-col"); // capture the full right column
+  const container = document.querySelector(".batting-header").parentElement; // Only batting section
   if (!container) return alert("Couldn't find lineup container!");
 
-  // Get date text from header
+  // Get date text
   const dateText = document.getElementById("lineupDate")?.textContent.trim() || "NoDate";
 
-  // temporarily set background for better contrast
-  container.style.background = "#ffffff";
+  // Clone container so we can safely add padding just for the screenshot
+  const clone = container.cloneNode(true);
+  clone.style.background = "#ffffff";
+  clone.style.padding = "20px";         // ✅ adds a white border margin
+  clone.style.borderRadius = "10px";    // ✅ rounded edges for cleaner look
+  clone.style.width = `${container.offsetWidth + 40}px`;
 
-  // generate image
-  const canvas = await html2canvas(container, {
+  document.body.appendChild(clone);
+  clone.style.position = "absolute";
+  clone.style.top = "-9999px"; // hide it off-screen while rendering
+
+  const canvas = await html2canvas(clone, {
     backgroundColor: "#ffffff",
     scale: 2,
   });
 
+  document.body.removeChild(clone); // remove the temporary clone
+
   const imgData = canvas.toDataURL("image/png");
 
-  // ✅ create dynamic file name: "Bambinos Lineup 10.9.25.png"
-  const formattedDate = dateText.replace(/[\/\-]/g, "."); // convert slashes/dashes to periods
+  // ✅ "Bambinos Lineup 10.9.25.png"
+  const formattedDate = dateText.replace(/[\/\-]/g, ".");
   const fileName = `Bambinos Lineup ${formattedDate}.png`;
 
-  // download automatically
+  // Download automatically
   const link = document.createElement("a");
   link.download = fileName;
   link.href = imgData;
   link.click();
 
-  // optional: copy to clipboard
+  // Optional: copy to clipboard
   if (navigator.clipboard && window.ClipboardItem) {
     const blob = await (await fetch(imgData)).blob();
     await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
@@ -283,8 +292,5 @@ document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
   } else {
     alert(`✅ "${fileName}" downloaded!`);
   }
-
-  // restore transparency
-  container.style.background = "transparent";
 });
 
